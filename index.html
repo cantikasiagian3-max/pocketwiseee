@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PocketWise Super App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #FDF7F8;
+            color: #334155;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Animations */
+        @keyframes wallet-float { 0%, 100% { transform: translateY(0) rotate(-5deg); } 50% { transform: translateY(-25px) rotate(5deg); } }
+        @keyframes book-float { 0%, 100% { transform: translate(60px, 60px) rotate(10deg); } 50% { transform: translate(70px, 40px) rotate(-10deg); } }
+        @keyframes card-float { 0%, 100% { transform: translate(-80px, -40px) rotate(-15deg); } 50% { transform: translate(-90px, -60px) rotate(-10deg); } }
+        @keyframes money-float { 0%, 100% { transform: translate(80px, -80px) rotate(20deg); } 50% { transform: translate(90px, -100px) rotate(10deg); } }
+        @keyframes fade-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes pop { from { opacity: 0; transform: scale(0.9) translateY(20px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes orbit { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes draw-circle { from { stroke-dasharray: 0 100; } }
+
+        .animate-wallet-float { animation: wallet-float 3s infinite ease-in-out; }
+        .animate-book-float { animation: book-float 4s infinite ease-in-out; }
+        .animate-card-float { animation: card-float 3.5s infinite ease-in-out; }
+        .animate-money-float { animation: money-float 4.5s infinite ease-in-out; }
+        .animate-fade-in { animation: fade-in 0.6s ease-out forwards; }
+        .animate-pop { animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .animate-draw-circle { animation: draw-circle 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+        .animate-orbit { animation: orbit 10s linear infinite; }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        .tab-active-pink { background-color: #fdf2f8; color: #FFB7C5; }
+        .tab-active-purple { background-color: #f5f3ff; color: #a78bfa; }
+        .tab-active-blue { background-color: #eff6ff; color: #60a5fa; }
+        .tab-active-teal { background-color: #f0fdfa; color: #2dd4bf; }
+        .tab-active-orange { background-color: #fff7ed; color: #fb923c; }
+
+        .calc-btn:active { transform: scale(0.95); }
+    </style>
+</head>
+<body>
+
+    <div id="app">
+        <!-- SPLASH SCREEN -->
+        <div id="splash" class="min-h-screen bg-[#FDF7F8] flex flex-col items-center justify-center p-6 overflow-hidden">
+            <div class="relative w-80 h-80 flex items-center justify-center">
+                <div class="absolute animate-wallet-float z-20">
+                    <div class="w-32 h-24 bg-orange-600 rounded-3xl relative shadow-2xl border-4 border-orange-700">
+                        <div class="absolute top-4 left-4 w-24 h-3 bg-orange-400 rounded-full opacity-50"></div>
+                        <div class="absolute top-1/2 right-4 w-6 h-6 bg-orange-900 rounded-full border-4 border-orange-500"></div>
+                    </div>
+                </div>
+                <div class="absolute translate-x-16 translate-y-16 animate-book-float z-10">
+                    <div class="w-24 h-32 bg-pink-400 rounded-xl relative shadow-xl border-l-8 border-pink-600 flex items-center justify-center overflow-hidden">
+                        <div class="w-full h-1 bg-pink-200 absolute top-8"></div>
+                        <div class="w-full h-1 bg-pink-200 absolute top-16"></div>
+                        <div class="w-full h-1 bg-pink-200 absolute top-24"></div>
+                        <i data-lucide="book-open" class="text-white opacity-80" style="width: 32px; height: 32px;"></i>
+                    </div>
+                </div>
+                <div class="absolute -translate-x-20 -translate-y-12 animate-card-float z-30">
+                    <div class="w-24 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg border border-indigo-400/50 p-2 flex flex-col justify-between">
+                        <div class="w-6 h-4 bg-yellow-400/80 rounded-sm"></div>
+                        <div class="space-y-1">
+                            <div class="w-12 h-1 bg-white/30 rounded"></div>
+                            <div class="w-8 h-1 bg-white/30 rounded"></div>
+                        </div>
+                        <i data-lucide="credit-card" class="self-end text-white/40" style="width: 14px; height: 14px;"></i>
+                    </div>
+                </div>
+                <div class="absolute translate-x-20 -translate-y-20 animate-money-float z-10">
+                    <div class="w-32 h-16 bg-emerald-500 rounded-lg shadow-md border-2 border-emerald-600 relative flex items-center justify-center overflow-hidden">
+                        <div class="absolute inset-0 border-4 border-emerald-400/30 m-1 rounded"></div>
+                        <div class="w-10 h-10 rounded-full border-2 border-emerald-400/50 flex items-center justify-center">
+                            <i data-lucide="banknote" class="text-emerald-100" style="width: 20px; height: 20px;"></i>
+                        </div>
+                        <div class="absolute top-1 right-1 font-black text-[8px] text-emerald-100">100</div>
+                        <div class="absolute bottom-1 left-1 font-black text-[8px] text-emerald-100">100</div>
+                    </div>
+                </div>
+            </div>
+            <h1 class="text-5xl font-black text-[#FFB7C5] mt-16 tracking-widest animate-pulse">PocketWise</h1>
+            <p class="text-orange-400 font-bold text-sm mt-3 uppercase tracking-[0.3em] opacity-80 italic">Manajemen Cerdas & Catatan Pena</p>
+        </div>
+
+        <!-- MAIN APP -->
+        <div id="main-app" class="hidden h-screen flex flex-col lg:flex-row overflow-hidden">
+            <!-- SIDEBAR (DESKTOP) -->
+            <aside class="hidden lg:flex w-64 bg-white border-r border-pink-50 flex-col p-6 shadow-sm z-50">
+                <div class="mb-10 px-2">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-[#FFB7C5] rounded-xl flex items-center justify-center text-white shadow-sm">
+                            <i data-lucide="wallet" style="width: 20px; height: 20px;"></i>
+                        </div>
+                        <div>
+                            <span class="text-xl font-black tracking-tight block leading-tight">PocketWise</span>
+                        </div>
+                    </div>
+                    <p class="text-[9px] font-bold text-orange-400 uppercase tracking-widest mt-2 ml-1 opacity-70">Manajemen Cerdas & Catatan Pena</p>
+                </div>
+                <nav class="flex flex-col gap-4 flex-1">
+                    <button onclick="setActiveTab('daily')" id="side-daily" class="p-4 rounded-2xl flex items-center gap-4 transition-all tab-active-pink">
+                        <i data-lucide="layout-dashboard"></i><span class="font-bold text-sm">Dashboard</span>
+                    </button>
+                    <button onclick="setActiveTab('ledger')" id="side-ledger" class="p-4 rounded-2xl flex items-center gap-4 transition-all text-slate-300">
+                        <i data-lucide="file-spreadsheet"></i><span class="font-bold text-sm">PENA</span>
+                    </button>
+                    <button onclick="setActiveTab('treasury')" id="side-treasury" class="p-4 rounded-2xl flex items-center gap-4 transition-all text-slate-300">
+                        <i data-lucide="users"></i><span class="font-bold text-sm">CMO</span>
+                    </button>
+                    <button onclick="setActiveTab('calculator')" id="side-calculator" class="p-4 rounded-2xl flex items-center gap-4 transition-all text-slate-300">
+                        <i data-lucide="calculator"></i><span class="font-bold text-sm">Kalkulator</span>
+                    </button>
+                    <button onclick="setActiveTab('profile')" id="side-profile" class="p-4 rounded-2xl flex items-center gap-4 transition-all text-slate-300">
+                        <i data-lucide="user"></i><span class="font-bold text-sm" id="side-profile-text">Profil</span>
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- MAIN CONTENT -->
+            <main class="flex-1 overflow-y-auto p-4 lg:p-10 pb-28 lg:pb-10 relative hide-scrollbar">
+                
+                <!-- DASHBOARD TAB -->
+                <div id="tab-daily" class="tab-content animate-fade-in space-y-6 lg:space-y-8 pb-10">
+                    <header class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-xl lg:text-2xl font-black" id="greeting-text">Halo, User Baru! 👋</h2>
+                            <p class="text-slate-400 text-xs lg:text-sm" id="date-label">Februari 2026</p>
+                        </div>
+                        <div class="flex items-center gap-3 bg-white p-2 pr-4 lg:pr-6 rounded-full shadow-sm border border-pink-50">
+                            <img id="header-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sari" class="w-8 h-8 lg:w-10 lg:h-10 rounded-full bg-pink-100" />
+                            <div class="hidden sm:block">
+                                <p class="text-[10px] font-black uppercase text-slate-300 leading-none">Status</p>
+                                <p id="status-label" class="text-xs font-black text-emerald-500">Hemat</p>
+                            </div>
+                        </div>
+                    </header>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
+                        <div class="lg:col-span-5 flex flex-col gap-6">
+                            <div class="bg-[#1A1A2E] p-6 lg:p-8 rounded-[2.5rem] lg:rounded-[3rem] text-white shadow-xl relative overflow-hidden">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest" id="balance-label">Saldo PENA</p>
+                                <h2 class="text-3xl lg:text-4xl font-black mt-2" id="total-balance">Rp 0</h2>
+                                <div class="flex gap-4 mt-8">
+                                    <div class="flex-1 p-3 bg-white/5 rounded-2xl border border-white/5">
+                                        <p class="text-[9px] text-emerald-400 font-black uppercase"><i data-lucide="trending-up" class="inline" style="width: 10px;"></i> Masuk</p>
+                                        <p class="font-bold text-xs lg:text-sm" id="total-income">+0</p>
+                                    </div>
+                                    <div class="flex-1 p-3 bg-white/5 rounded-2xl border border-white/5">
+                                        <p class="text-[9px] text-pink-400 font-black uppercase"><i data-lucide="trending-down" class="inline" style="width: 10px;"></i> Keluar</p>
+                                        <p class="font-bold text-xs lg:text-sm" id="total-expense">-0</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-6">
+                                <div class="bg-white p-6 rounded-[2.5rem] lg:rounded-[3rem] shadow-sm border border-pink-50 flex flex-col items-center justify-center relative min-h-[280px]">
+                                    <h3 class="absolute top-6 left-8 font-black text-[10px] flex items-center gap-2 uppercase tracking-wider text-emerald-500"><i data-lucide="trending-up" style="width:14px;"></i> Pemasukan</h3>
+                                    <div id="chart-in-container" class="flex flex-col items-center w-full mt-4"></div>
+                                </div>
+                                <div class="bg-white p-6 rounded-[2.5rem] lg:rounded-[3rem] shadow-sm border border-pink-50 flex flex-col items-center justify-center relative min-h-[280px]">
+                                    <h3 class="absolute top-6 left-8 font-black text-[10px] flex items-center gap-2 uppercase tracking-wider text-pink-500"><i data-lucide="trending-down" style="width:14px;"></i> Pengeluaran</h3>
+                                    <div id="chart-out-container" class="flex flex-col items-center w-full mt-4"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lg:col-span-7 space-y-6">
+                            <div class="bg-white p-6 lg:p-8 rounded-[2.5rem] lg:rounded-[3rem] shadow-sm border border-pink-50">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="font-black text-xs lg:text-sm flex items-center gap-2"><i data-lucide="calendar" class="text-pink-400" style="width:16px;"></i> Kalender</h3>
+                                    <div class="flex items-center gap-3">
+                                        <button onclick="changeMonth(-1)" class="p-2 bg-slate-50 rounded-xl text-slate-400 hover:text-pink-400"><i data-lucide="chevron-left" style="width:16px;"></i></button>
+                                        <span id="calendar-month-text" class="text-[10px] lg:text-xs font-black uppercase text-slate-600 min-w-[80px] text-center">Februari 2026</span>
+                                        <button onclick="changeMonth(1)" class="p-2 bg-slate-50 rounded-xl text-slate-400 hover:text-pink-400"><i data-lucide="chevron-right" style="width:16px;"></i></button>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-7 gap-1 lg:gap-2 mb-4">
+                                    <div class="text-[10px] font-black text-slate-300 text-center">S</div>
+                                    <div class="text-[10px] font-black text-slate-300 text-center">S</div>
+                                    <div class="text-[10px] font-black text-slate-300 text-center">R</div>
+                                    <div class="text-[10px] font-black text-slate-300 text-center">K</div>
+                                    <div class="text-[10px] font-black text-slate-300 text-center">J</div>
+                                    <div class="text-[10px] font-black text-slate-300 text-center">S</div>
+                                    <div class="text-[10px] font-black text-slate-300 text-center">M</div>
+                                </div>
+                                <div id="calendar-grid" class="grid grid-cols-7 gap-1 lg:gap-2"></div>
+                            </div>
+
+                            <div class="bg-white p-6 lg:p-8 rounded-[2.5rem] lg:rounded-[3rem] shadow-sm border border-pink-50">
+                                <div class="flex justify-between items-center mb-6">
+                                    <h3 class="font-black text-xs lg:text-sm flex items-center gap-2"><i data-lucide="target" class="text-blue-400" style="width:16px;"></i> Target Impian</h3>
+                                    <button onclick="openDreamModal()" class="p-2 bg-blue-50 text-blue-400 rounded-xl"><i data-lucide="plus" style="width:16px;"></i></button>
+                                </div>
+                                <div id="dreams-container" class="space-y-6"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LEDGER TAB -->
+                <div id="tab-ledger" class="tab-content hidden animate-fade-in bg-white rounded-[2.5rem] lg:rounded-[3rem] p-6 lg:p-8 shadow-sm border border-pink-50 min-h-full">
+                    <h3 class="font-black text-xl mb-8" id="ledger-title">Pencatatan Dana (PENA)</h3>
+                    <button onclick="openTxModal('expense')" class="w-full bg-gradient-to-r from-pink-300 to-purple-400 text-white py-5 lg:py-6 rounded-[2rem] lg:rounded-[2.5rem] font-black mb-10 shadow-lg flex items-center justify-center gap-3">
+                        <i data-lucide="plus" style="width: 24px;"></i> <span id="add-btn-text">TAMBAH CATATAN</span>
+                    </button>
+                    <div id="transactions-list" class="space-y-4"></div>
+                </div>
+
+                <!-- TREASURY TAB -->
+                <div id="tab-treasury" class="tab-content hidden animate-fade-in bg-white rounded-[2.5rem] lg:rounded-[3rem] p-6 lg:p-8 shadow-sm border border-blue-50 min-h-full">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+                        <h3 class="font-black text-xl">Chief Money Officer</h3>
+                        <div class="bg-blue-50 px-6 py-3 rounded-2xl border border-blue-100 w-full sm:w-auto">
+                            <p class="text-[10px] font-black text-blue-400 uppercase mb-1" id="cmo-collected-label">Terkumpul</p>
+                            <p class="text-lg font-black text-blue-600" id="total-treasury">Rp 0</p>
+                        </div>
+                    </div>
+                    <button onclick="openCmoModal()" class="w-full bg-gradient-to-r from-blue-400 to-indigo-500 text-white py-5 lg:py-6 rounded-[2rem] lg:rounded-[2.5rem] font-black mb-10 shadow-lg flex items-center justify-center gap-3">
+                        <i data-lucide="plus" style="width: 24px;"></i> <span id="cmo-add-btn">TAMBAH DATA</span>
+                    </button>
+                    <div id="treasury-list" class="space-y-4"></div>
+                </div>
+
+                <!-- CALCULATOR TAB -->
+                <div id="tab-calculator" class="tab-content hidden animate-fade-in flex flex-col h-full space-y-4 lg:space-y-6">
+                    <header class="px-2">
+                        <h3 class="text-xl lg:text-3xl font-black text-slate-800 tracking-tight">Kalkulator Langsung</h3>
+                        <p class="text-slate-400 text-[10px] lg:text-base">Hitung cepat tanpa ribet.</p>
+                    </header>
+                    <div class="flex-1 flex flex-col bg-white rounded-[2rem] lg:rounded-[4rem] p-4 lg:p-10 shadow-sm border border-teal-50 w-full mx-auto max-w-full lg:max-w-6xl transition-all">
+                        <div id="calc-display-area" class="w-full mb-4 lg:mb-10 p-6 lg:p-14 bg-slate-50 rounded-[1.5rem] lg:rounded-[3rem] text-right flex flex-col justify-end min-h-[120px] lg:min-h-[220px] border transition-all">
+                            <div id="calc-history" class="text-slate-300 text-sm lg:text-3xl font-bold h-6 lg:h-12 mb-1 lg:mb-4 truncate tracking-wide"></div>
+                            <div id="calc-main" class="text-slate-800 text-3xl lg:text-7xl font-black tracking-tight truncate">0</div>
+                        </div>
+                        <div class="grid grid-cols-4 gap-3 lg:gap-8 flex-1">
+                            <button onclick="calcInput('C')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-orange-50 text-orange-500 shadow-sm">C</button>
+                            <button onclick="calcInput('DEL')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-slate-50 text-slate-500 shadow-sm">DEL</button>
+                            <button onclick="calcInput('%')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-slate-50 text-slate-500 shadow-sm">%</button>
+                            <button onclick="calcInput('/')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-teal-400 text-white shadow-md">÷</button>
+                            
+                            <button onclick="calcInput('7')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-white border border-slate-100 text-slate-800 shadow-sm">7</button>
+                            <button onclick="calcInput('8')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-white border border-slate-100 text-slate-800 shadow-sm">8</button>
+                            <button onclick="calcInput('9')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-white border border-slate-100 text-slate-800 shadow-sm">9</button>
+                            <button onclick="calcInput('*')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-teal-400 text-white shadow-md">×</button>
+                            
+                            <button onclick="calcInput('4')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-white border border-slate-100 text-slate-800 shadow-sm">4</button>
+                            <button onclick="calcInput('5')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-white border border-slate-100 text-slate-800 shadow-sm">5</button>
+                            <button onclick="calcInput('6')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-white border border-slate-100 text-slate-800 shadow-sm">6</button>
+                            <button onclick="calcInput('-')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-teal-400 text-white shadow-md">−</button>
+                            
+                            <button onclick="calcInput('1')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-white border border-slate-100 text-slate-800 shadow-sm">1</button>
+                            <button onclick="calcInput('2')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-white border border-slate-100 text-slate-800 shadow-sm">2</button>
+                            <button onclick="calcInput('3')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-white border border-slate-100 text-slate-800 shadow-sm">3</button>
+                            <button onclick="calcInput('+')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-teal-400 text-white shadow-md">+</button>
+                            
+                            <button onclick="calcInput('.')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-white border border-slate-100 text-slate-800 shadow-sm">.</button>
+                            <button onclick="calcInput('0')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-white border border-slate-100 text-slate-800 shadow-sm">0</button>
+                            <button onclick="calcInput(',')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-white border border-slate-100 text-slate-800 shadow-sm">,</button>
+                            <button onclick="calcInput('=')" class="calc-btn h-full min-h-[56px] lg:min-h-[80px] rounded-2xl lg:rounded-[2.5rem] font-black text-lg lg:text-3xl bg-indigo-500 text-white shadow-lg">=</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROFILE TAB -->
+                <div id="tab-profile" class="tab-content hidden max-w-2xl mx-auto animate-fade-in space-y-8 pb-10">
+                    <div class="bg-white p-6 lg:p-10 rounded-[3rem] lg:rounded-[4rem] shadow-sm border border-pink-50 text-center relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-pink-100 to-purple-100 opacity-50"></div>
+                        <img id="profile-avatar" src="https://api.dicebear.com/7.x/avataaars/svg?seed=Sari" class="w-32 h-32 lg:w-40 lg:h-40 rounded-[3rem] lg:rounded-[3.5rem] bg-pink-100 border-8 border-white shadow-xl mx-auto relative z-10" />
+                        
+                        <div class="mt-8 flex flex-col items-center min-h-[60px]">
+                            <!-- Nama Display -->
+                            <div id="name-display" class="flex items-center gap-3 cursor-pointer group hover:bg-slate-50 px-4 py-2 rounded-2xl transition-all" onclick="toggleEditName(true)">
+                                <h3 id="display-user-name" class="text-2xl lg:text-3xl font-black text-slate-800">User Baru</h3>
+                                <div class="p-2 bg-slate-50 rounded-xl text-slate-300 group-hover:text-pink-400 transition-colors"><i data-lucide="edit-2" style="width:16px;"></i></div>
+                            </div>
+                            
+                            <!-- Nama Edit -->
+                            <div id="name-edit" class="hidden flex items-center gap-2 bg-slate-50 p-2 pl-6 rounded-[2rem] border-2 border-pink-200 w-full max-w-md animate-pop">
+                                <input id="input-user-name" class="bg-transparent border-none outline-none font-black text-xl text-slate-700 flex-1 min-w-0" value="User Baru" maxlength="20" />
+                                <button onclick="saveName()" class="bg-pink-400 text-white p-4 rounded-2xl flex items-center justify-center active:scale-95 transition-transform shrink-0 shadow-sm"><i data-lucide="save" style="width:20px;"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 px-4 lg:px-8">
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-4 flex items-center justify-center gap-2"><i data-lucide="globe" style="width:12px;"></i> <span id="lang-label">Bahasa</span></p>
+                            <div class="flex bg-slate-50 p-1 rounded-2xl border border-slate-100">
+                                <button onclick="setLanguage('id')" id="lang-id" class="flex-1 py-3 rounded-xl font-bold text-xs transition-all bg-white text-pink-500 shadow-sm">🇮🇩 Indonesia</button>
+                                <button onclick="setLanguage('en')" id="lang-en" class="flex-1 py-3 rounded-xl font-bold text-xs transition-all text-slate-400">🇺🇸 English</button>
+                            </div>
+                        </div>
+
+                        <div class="mt-10">
+                            <p class="text-[10px] font-black text-slate-400 uppercase mb-4" id="avatar-label">Pilih Karakter</p>
+                            <div id="avatar-selector" class="flex justify-center gap-3 px-2 lg:px-4 relative z-10 flex-wrap max-w-md mx-auto max-h-[200px] overflow-y-auto hide-scrollbar p-2"></div>
+                        </div>
+
+                        <button class="mt-12 w-full bg-red-50 text-red-500 py-5 rounded-[2rem] font-black uppercase text-xs tracking-widest flex items-center justify-center gap-2 active:scale-95 transition-transform"><i data-lucide="log-out" style="width:16px;"></i> <span id="logout-btn">Keluar Akun</span></button>
+                    </div>
+                </div>
+            </main>
+
+            <!-- MOBILE NAV -->
+            <nav class="lg:hidden fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-xl border-t border-pink-50 p-4 pb-6 flex justify-around items-center z-40">
+                <button onclick="setActiveTab('daily')" id="mob-daily" class="flex flex-col items-center gap-1 text-pink-400">
+                    <i data-lucide="layout-dashboard" class="fill-current"></i><span class="text-[10px] font-black">Dash</span>
+                </button>
+                <button onclick="setActiveTab('ledger')" id="mob-ledger" class="flex flex-col items-center gap-1 text-slate-300">
+                    <i data-lucide="file-spreadsheet"></i><span class="text-[10px] font-black">PENA</span>
+                </button>
+                <button onclick="setActiveTab('treasury')" id="mob-treasury" class="flex flex-col items-center gap-1 text-slate-300">
+                    <i data-lucide="users"></i><span class="text-[10px] font-black">CMO</span>
+                </button>
+                <button onclick="setActiveTab('calculator')" id="mob-calculator" class="flex flex-col items-center gap-1 text-slate-300">
+                    <i data-lucide="calculator"></i><span class="text-[10px] font-black">Calc</span>
+                </button>
+                <button onclick="setActiveTab('profile')" id="mob-profile" class="flex flex-col items-center gap-1 text-slate-300">
+                    <i data-lucide="user"></i><span class="text-[10px] font-black">Profil</span>
+                </button>
+                <div class="absolute -top-6 left-1/2 -translate-x-1/2">
+                    <button onclick="openTxModal('expense')" class="w-14 h-14 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full text-white shadow-lg flex items-center justify-center border-4 border-[#FDF7F8]">
+                        <i data-lucide="plus" style="width: 28px; height: 28px;"></i>
+                    </button>
+                </div>
+            </nav>
+        </div>
+
+        <!-- MODAL CONTAINER -->
+        <div id="modal-container" class="hidden fixed inset-0 z-[100] flex items-end lg:items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+            <div id="modal-content" class="bg-white w-full max-w-md rounded-[2.5rem] lg:rounded-[3rem] p-6 lg:p-8 animate-pop relative overflow-hidden flex flex-col max-h-[90vh]"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATA & STATE ---
+        let currentTab = 'daily';
+        let language = 'id';
+        let userName = 'User Baru';
+        let avatarSeed = 'Sari';
+        let transactions = [
+            { id: 1, amount: 45000, note: 'Makan Siang', type: 'expense', category: 'Makanan', time: '14:20', date: '2026-02-06', emoji: '🍱' },
+            { id: 2, amount: 120000, note: 'Token Listrik', type: 'expense', category: 'Tagihan', time: '10:00', date: '2026-02-05', emoji: '⚡' },
+            { id: 3, amount: 1500000, note: 'Gaji Pokok', type: 'income', category: 'Gaji', time: '08:00', date: '2026-02-01', emoji: '💰' },
+        ];
+        let dreams = [{ id: 1, title: 'Beli MacBook Air', target: 15000000 }];
+        let treasuryList = [{ id: 1, name: 'Andi Saputra', amount: 50000, paid: true }];
+        let currentMonth = new Date(2026, 1, 1);
+        let selectedDate = null;
+        let calcDisplay = '';
+        let calcResult = '';
+        let isResultFinal = false;
+
+        const categories = [
+            { name: 'Makanan', emoji: '🍱', color: '#FFB7C5', type: 'expense' },
+            { name: 'Belanja', emoji: '🛍️', color: '#B088F9', type: 'expense' },
+            { name: 'Tagihan', emoji: '⚡', color: '#FFD93D', type: 'expense' },
+            { name: 'Hiburan', emoji: '🎮', color: '#6BCB77', type: 'expense' },
+            { name: 'Transport', emoji: '🚗', color: '#4D96FF', type: 'expense' },
+            { name: 'Gaji', emoji: '💰', color: '#10B981', type: 'income' },
+            { name: 'Bonus', emoji: '🎁', color: '#F472B6', type: 'income' },
+            { name: 'Keluarga', emoji: '🏠', color: '#60A5FA', type: 'income' },
+            { name: 'Investasi', emoji: '📈', color: '#34D399', type: 'income' }
+        ];
+
+        // Genap 30 Avatar Lucu
+        const avatarOptions = [
+            'Sari', 'Anya', 'Budi', 'Oliver', 'Luna', 
+            'Max', 'Bella', 'Charlie', 'Milo', 'Ruby', 
+            'Jack', 'Sophie', 'Leo', 'Mia', 'Simba',
+            'Zoe', 'Hiro', 'Taka', 'Emi', 'Nico',
+            'Coco', 'Pepper', 'Ginger', 'Snowball', 'Shadow',
+            'Peanut', 'Lucky', 'Daisy', 'Teddy', 'Nala'
+        ];
+
+        // --- CORE FUNCTIONS ---
+        function init() {
+            lucide.createIcons();
+            setTimeout(() => {
+                const splash = document.getElementById('splash');
+                const main = document.getElementById('main-app');
+                if(splash) splash.classList.add('hidden');
+                if(main) main.classList.remove('hidden');
+                updateUI();
+            }, 3000);
+            renderAvatarSelector();
+        }
+
+        function setActiveTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            const targetTab = document.getElementById(`tab-${tab}`);
+            if(targetTab) targetTab.classList.remove('hidden');
+            
+            const tabs = ['daily', 'ledger', 'treasury', 'calculator', 'profile'];
+            const colors = { daily: 'pink', ledger: 'purple', treasury: 'blue', calculator: 'teal', profile: 'orange' };
+            
+            tabs.forEach(t => {
+                const sideBtn = document.getElementById(`side-${t}`);
+                const mobBtn = document.getElementById(`mob-${t}`);
+                
+                if (sideBtn) {
+                    if (t === tab) {
+                        sideBtn.className = `p-4 rounded-2xl flex items-center gap-4 transition-all tab-active-${colors[t]}`;
+                    } else {
+                        sideBtn.className = `p-4 rounded-2xl flex items-center gap-4 transition-all text-slate-300 hover:text-${colors[t]}-300`;
+                    }
+                }
+
+                if (mobBtn) {
+                    const icon = mobBtn.querySelector('i');
+                    if (t === tab) {
+                        mobBtn.className = `flex flex-col items-center gap-1 text-${colors[t]}-400`;
+                        if(icon) icon.classList.add('fill-current');
+                    } else {
+                        mobBtn.className = `flex flex-col items-center gap-1 text-slate-300`;
+                        if(icon) icon.classList.remove('fill-current');
+                    }
+                }
+            });
+            updateUI();
+        }
+
+        function updateUI() {
+            const filtered = transactions.filter(t => {
+                const d = new Date(t.date);
+                if (selectedDate) return t.date === selectedDate;
+                return d.getMonth() === currentMonth.getMonth() && d.getFullYear() === currentMonth.getFullYear();
+            });
+
+            const income = filtered.filter(t => t.type === 'income').reduce((acc, curr) => acc + curr.amount, 0);
+            const expense = filtered.filter(t => t.type === 'expense').reduce((acc, curr) => acc + curr.amount, 0);
+            const balance = income - expense;
+
+            document.getElementById('greeting-text').innerText = `${language === 'id' ? 'Halo' : 'Hello'}, ${userName}! 👋`;
+            document.getElementById('display-user-name').innerText = userName;
+            document.getElementById('total-balance').innerText = `Rp ${balance.toLocaleString()}`;
+            document.getElementById('total-income').innerText = `+${income.toLocaleString()}`;
+            document.getElementById('total-expense').innerText = `-${expense.toLocaleString()}`;
+            
+            const monthName = currentMonth.toLocaleDateString(language === 'id' ? 'id-ID' : 'en-US', { month: 'long', year: 'numeric' });
+            document.getElementById('date-label').innerText = selectedDate ? `${language === 'id' ? 'Data untuk' : 'Data for'} ${selectedDate}` : monthName;
+            document.getElementById('calendar-month-text').innerText = monthName;
+
+            const ratio = income > 0 ? (expense / income) : (expense > 0 ? 1 : 0);
+            const statusEl = document.getElementById('status-label');
+            if (ratio > 0.85) {
+                statusEl.innerText = language === 'id' ? 'Boros 🚨' : 'Extravagant 🚨';
+                statusEl.className = 'text-xs font-black text-red-500';
+            } else {
+                statusEl.innerText = language === 'id' ? 'Hemat' : 'Frugal';
+                statusEl.className = 'text-xs font-black text-emerald-500';
+            }
+
+            renderCharts(filtered);
+            renderCalendar();
+            renderDreams(balance);
+            renderLedger();
+            renderTreasury();
+            lucide.createIcons();
+        }
+
+        function renderCalendar() {
+            const grid = document.getElementById('calendar-grid');
+            if(!grid) return;
+            grid.innerHTML = '';
+            const daysInMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0).getDate();
+            const startDay = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), 1).getDay();
+
+            for (let i = 0; i < startDay; i++) {
+                grid.innerHTML += '<div class="aspect-square"></div>';
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateKey = `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const hasTx = transactions.some(t => t.date === dateKey);
+                const isSelected = selectedDate === dateKey;
+                const isToday = new Date().toISOString().split('T')[0] === dateKey;
+
+                grid.innerHTML += `
+                    <div onclick="selectDate('${dateKey}')" class="aspect-square rounded-2xl flex flex-col items-center justify-center gap-1 border transition-all cursor-pointer ${isToday ? 'bg-pink-100 border-pink-200' : isSelected ? 'bg-purple-50 border-purple-300' : 'hover:bg-slate-50 border-transparent'}">
+                        <span class="text-[10px] lg:text-xs font-bold ${isToday ? 'text-pink-600' : isSelected ? 'text-purple-600' : 'text-slate-600'}">${day}</span>
+                        ${hasTx ? `<div class="w-1 h-1 rounded-full bg-pink-400"></div>` : ''}
+                    </div>
+                `;
+            }
+        }
+
+        function selectDate(date) {
+            selectedDate = (selectedDate === date) ? null : date;
+            updateUI();
+        }
+
+        function changeMonth(offset) {
+            currentMonth = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + offset, 1);
+            selectedDate = null;
+            updateUI();
+        }
+
+        function renderCharts(filtered) {
+            const renderData = (type, containerId) => {
+                const container = document.getElementById(containerId);
+                if(!container) return;
+                const items = filtered.filter(t => t.type === type);
+                const total = items.reduce((acc, curr) => acc + curr.amount, 0);
+
+                if (total === 0) {
+                    container.innerHTML = `<p class="text-[10px] font-bold text-slate-300 italic">Tidak Ada Data</p>`;
+                    return;
+                }
+
+                const summary = {};
+                items.forEach(t => summary[t.category] = (summary[t.category] || 0) + t.amount);
+                const chartItems = Object.entries(summary).map(([name, val]) => ({
+                    name, val, percentage: (val / total * 100).toFixed(1), color: categories.find(c => c.name === name)?.color || '#94A3B8'
+                })).sort((a, b) => b.val - a.val);
+
+                let svgContent = '';
+                let offset = 0;
+                chartItems.forEach(item => {
+                    svgContent += `<circle cx="18" cy="18" r="15.915" fill="transparent" stroke="${item.color}" stroke-width="3.5" stroke-dasharray="${item.percentage} 100" stroke-dashoffset="-${offset}" class="animate-draw-circle" />`;
+                    offset += Number(item.percentage);
+                });
+
+                container.innerHTML = `
+                    <div class="relative w-24 h-24 lg:w-28 lg:h-28 mb-4 animate-orbit">
+                        <svg viewBox="0 0 36 36" class="w-full h-full -rotate-90">${svgContent}</svg>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-[8px] font-black text-slate-400 uppercase tracking-tighter">${type === 'income' ? 'Masuk' : 'Keluar'}</span>
+                        </div>
+                    </div>
+                    <div class="w-full space-y-1.5 px-4">
+                        ${chartItems.slice(0, 4).map(item => `
+                            <div class="flex justify-between items-center group">
+                                <div class="flex items-center gap-1.5">
+                                    <div class="w-1.5 h-1.5 rounded-full" style="background-color: ${item.color}"></div>
+                                    <span class="text-[9px] font-bold text-slate-500 truncate max-w-[60px]">${item.name}</span>
+                                </div>
+                                <span class="text-[9px] font-black text-slate-800">${item.percentage}%</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            };
+
+            renderData('income', 'chart-in-container');
+            renderData('expense', 'chart-out-container');
+        }
+
+        function renderDreams(balance) {
+            const container = document.getElementById('dreams-container');
+            if(!container) return;
+            if (dreams.length === 0) {
+                container.innerHTML = `<p class="text-[10px] font-bold text-slate-300 italic text-center">Belum ada impian.</p>`;
+                return;
+            }
+            container.innerHTML = dreams.map(d => {
+                const progress = Math.min(Math.round((balance / d.target) * 100), 100);
+                return `
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <p class="text-xs font-black text-slate-800">${d.title}</p>
+                                <p class="text-[9px] font-bold text-slate-400">Target: Rp${d.target.toLocaleString()}</p>
+                            </div>
+                            <p class="text-xs font-black text-blue-500">${progress}%</p>
+                        </div>
+                        <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="h-full bg-blue-400 transition-all duration-1000" style="width: ${progress}%"></div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderLedger() {
+            const list = document.getElementById('transactions-list');
+            if(!list) return;
+            list.innerHTML = transactions.map(t => `
+                <div class="flex justify-between items-center p-4 lg:p-5 bg-white border border-slate-50 rounded-[2rem] hover:shadow-md transition-shadow">
+                    <div class="flex items-center gap-3 lg:gap-4">
+                        <span class="text-xl lg:text-2xl p-2 lg:p-3 bg-slate-50 rounded-2xl">${t.emoji}</span>
+                        <div>
+                            <p class="font-black text-sm lg:text-base text-slate-700">${t.note}</p>
+                            <p class="text-[9px] lg:text-[10px] font-bold text-slate-300 uppercase">${t.category} • ${t.date}</p>
+                        </div>
+                    </div>
+                    <p class="text-xs lg:text-sm font-black ${t.type === 'income' ? 'text-emerald-500' : 'text-slate-800'}">
+                        ${t.type === 'income' ? '+' : '-'}Rp${t.amount.toLocaleString()}
+                    </p>
+                </div>
+            `).join('');
+        }
+
+        function renderTreasury() {
+            const list = document.getElementById('treasury-list');
+            if(!list) return;
+            const total = treasuryList.filter(t => t.paid).reduce((acc, curr) => acc + curr.amount, 0);
+            const treasuryDisplay = document.getElementById('total-treasury');
+            if(treasuryDisplay) treasuryDisplay.innerText = `Rp ${total.toLocaleString()}`;
+            
+            list.innerHTML = treasuryList.map(m => `
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-5 lg:p-6 bg-slate-50 rounded-[2rem] lg:rounded-[2.5rem] border border-white gap-4">
+                   <div class="flex items-center gap-4 lg:gap-5 w-full">
+                     <div class="w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0 ${m.paid ? 'bg-emerald-100 text-emerald-600' : 'bg-orange-100 text-orange-600'}">
+                       <i data-lucide="${m.paid ? 'check' : 'timer'}" style="width:18px;"></i>
+                     </div>
+                     <div class="flex-1 min-w-0">
+                       <p class="font-black text-sm lg:text-base text-slate-700 truncate">${m.name}</p>
+                       <p class="text-[10px] font-bold text-slate-400">Rp${m.amount.toLocaleString()}</p>
+                     </div>
+                   </div>
+                   <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                     <button onclick="toggleTreasury(${m.id})" class="flex-1 sm:flex-none px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase transition-all ${m.paid ? 'bg-emerald-500 text-white shadow-md' : 'bg-white text-slate-400 border border-slate-200'}">
+                       ${m.paid ? 'Lunas' : 'Belum'}
+                     </button>
+                     <button onclick="deleteTreasury(${m.id})" class="p-2.5 text-slate-300 hover:text-red-400"><i data-lucide="trash-2" style="width:18px;"></i></button>
+                   </div>
+                </div>
+            `).join('');
+        }
+
+        function toggleTreasury(id) {
+            const m = treasuryList.find(item => item.id === id);
+            if (m) m.paid = !m.paid;
+            updateUI();
+        }
+
+        function deleteTreasury(id) {
+            treasuryList = treasuryList.filter(m => m.id !== id);
+            updateUI();
+        }
+
+        function calcInput(val) {
+            const main = document.getElementById('calc-main');
+            const hist = document.getElementById('calc-history');
+            if(!main || !hist) return;
+
+            if (val === 'C') {
+                calcDisplay = '';
+                calcResult = '';
+                isResultFinal = false;
+            } else if (val === 'DEL') {
+                if (isResultFinal) { calcDisplay = ''; isResultFinal = false; }
+                else calcDisplay = calcDisplay.slice(0, -1);
+            } else if (val === '=') {
+                try {
+                    const evalStr = calcDisplay.replace(/,/g, '.');
+                    calcResult = eval(evalStr).toLocaleString();
+                    isResultFinal = true;
+                } catch(e) {
+                    calcResult = 'Error';
+                    isResultFinal = true;
+                }
+            } else {
+                if (isResultFinal) { calcDisplay = val; isResultFinal = false; }
+                else calcDisplay += val;
+            }
+
+            main.innerText = isResultFinal ? calcResult : (calcDisplay || '0');
+            hist.innerText = isResultFinal ? calcDisplay : (calcResult || '');
+            
+            const area = document.getElementById('calc-display-area');
+            if (isResultFinal) {
+                area.classList.add('border-indigo-200', 'bg-indigo-50/30');
+                main.className = "text-indigo-600 text-4xl lg:text-8xl font-black tracking-tight scale-105 origin-right transition-all";
+            } else {
+                area.classList.remove('border-indigo-200', 'bg-indigo-50/30');
+                main.className = "text-slate-800 text-3xl lg:text-7xl font-black tracking-tight transition-all";
+            }
+        }
+
+        function setLanguage(lang) {
+            language = lang;
+            const lid = document.getElementById('lang-id');
+            const len = document.getElementById('lang-en');
+            if(lid) lid.className = `flex-1 py-3 rounded-xl font-bold text-xs transition-all ${lang === 'id' ? 'bg-white text-pink-500 shadow-sm' : 'text-slate-400'}`;
+            if(len) len.className = `flex-1 py-3 rounded-xl font-bold text-xs transition-all ${lang === 'en' ? 'bg-white text-pink-500 shadow-sm' : 'text-slate-400'}`;
+            
+            const trans = {
+                id: { balance: 'Saldo PENA', sideProf: 'Profil', lang: 'Bahasa', char: 'Pilih Karakter', logout: 'Keluar Akun', ledger: 'Pencatatan Dana (PENA)', add: 'TAMBAH CATATAN', cmoAdd: 'TAMBAH DATA', collected: 'Terkumpul' },
+                en: { balance: 'PENA Balance', sideProf: 'Profile', lang: 'Language', char: 'Choose Character', logout: 'Logout', ledger: 'Fund Tracking (PENA)', add: 'ADD RECORD', cmoAdd: 'ADD DATA', collected: 'Collected' }
+            };
+            document.getElementById('balance-label').innerText = trans[lang].balance;
+            document.getElementById('side-profile-text').innerText = trans[lang].sideProf;
+            document.getElementById('lang-label').innerText = trans[lang].lang;
+            document.getElementById('avatar-label').innerText = trans[lang].char;
+            document.getElementById('logout-btn').innerText = trans[lang].logout;
+            document.getElementById('ledger-title').innerText = trans[lang].ledger;
+            document.getElementById('add-btn-text').innerText = trans[lang].add;
+            document.getElementById('cmo-add-btn').innerText = trans[lang].cmoAdd;
+            document.getElementById('cmo-collected-label').innerText = trans[lang].collected;
+
+            updateUI();
+        }
+
+        function toggleEditName(show) {
+            const disp = document.getElementById('name-display');
+            const edit = document.getElementById('name-edit');
+            if(disp) disp.className = show ? 'hidden' : 'flex items-center gap-3 cursor-pointer group hover:bg-slate-50 px-4 py-2 rounded-2xl transition-all';
+            if(edit) edit.className = show ? 'flex items-center gap-2 bg-slate-50 p-2 pl-6 rounded-[2rem] border-2 border-pink-200 w-full max-w-md animate-pop' : 'hidden';
+            
+            if(show) {
+                const input = document.getElementById('input-user-name');
+                input.focus();
+                input.select();
+            }
+        }
+
+        function saveName() {
+            const input = document.getElementById('input-user-name');
+            if(input.value.trim() !== "") {
+                userName = input.value.trim();
+            }
+            toggleEditName(false);
+            updateUI();
+        }
+
+        function renderAvatarSelector() {
+            const container = document.getElementById('avatar-selector');
+            if(!container) return;
+            container.innerHTML = avatarOptions.map(opt => `
+                <button onclick="setAvatar('${opt}')" class="w-12 h-12 rounded-2xl overflow-hidden border-2 transition-all hover:scale-110 active:scale-95 m-1 ${avatarSeed === opt ? 'border-pink-400 ring-2 ring-pink-100 scale-105 bg-pink-50' : 'border-slate-100 opacity-60'}">
+                    <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${opt}" loading="lazy" />
+                </button>
+            `).join('');
+        }
+
+        function setAvatar(seed) {
+            avatarSeed = seed;
+            const url = `https://api.dicebear.com/7.x/avataaars/svg?seed=${seed}`;
+            document.getElementById('profile-avatar').src = url;
+            document.getElementById('header-avatar').src = url;
+            renderAvatarSelector();
+        }
+
+        function openModal(html) {
+            const container = document.getElementById('modal-container');
+            const content = document.getElementById('modal-content');
+            if(!content || !container) return;
+            content.innerHTML = html;
+            container.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function closeModal() {
+            document.getElementById('modal-container').classList.add('hidden');
+        }
+
+        function openTxModal(type) {
+            const cats = categories.filter(c => c.type === type);
+            let catHtml = cats.map(c => `
+                <button onclick="window.tempCat='${c.name}'" class="p-3 rounded-2xl flex flex-col items-center gap-2 border-2 border-slate-50 hover:border-pink-300">
+                    <span class="text-xl">${c.emoji}</span>
+                    <span class="text-[9px] font-black text-slate-600">${c.name}</span>
+                </button>
+            `).join('');
+
+            window.tempType = type;
+            window.tempCat = cats[0].name;
+
+            openModal(`
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl lg:text-2xl font-black text-slate-800">${language === 'id' ? 'Entri PENA' : 'PENA Entry'}</h3>
+                    <button onclick="closeModal()" class="p-3 bg-slate-50 rounded-2xl text-slate-400"><i data-lucide="x"></i></button>
+                </div>
+                <div class="flex bg-slate-100 p-1 rounded-2xl mb-6">
+                    <button onclick="openTxModal('expense')" class="flex-1 py-3 rounded-xl font-black text-xs transition-all ${type === 'expense' ? 'bg-white text-pink-500 shadow-sm' : 'text-slate-400'}">KELUAR</button>
+                    <button onclick="openTxModal('income')" class="flex-1 py-3 rounded-xl font-black text-xs transition-all ${type === 'income' ? 'bg-white text-emerald-500 shadow-sm' : 'text-slate-400'}">MASUK</button>
+                </div>
+                <div class="space-y-6 overflow-y-auto">
+                    <input id="new-note" class="w-full p-4 bg-slate-50 border-none rounded-[1.2rem] font-bold outline-none" placeholder="Deskripsi..." />
+                    <input id="new-amount" type="number" class="w-full p-4 bg-slate-50 border-none rounded-[1.2rem] font-black outline-none text-lg" placeholder="Jumlah Rp..." />
+                    <div class="grid grid-cols-3 gap-3">${catHtml}</div>
+                </div>
+                <button onclick="saveTx()" class="w-full py-5 rounded-[2rem] font-black text-white mt-6 uppercase ${type === 'income' ? 'bg-emerald-400' : 'bg-pink-400'}">SIMPAN</button>
+            `);
+        }
+
+        function saveTx() {
+            const note = document.getElementById('new-note').value;
+            const amount = parseInt(document.getElementById('new-amount').value);
+            if (!note || isNaN(amount)) return;
+            
+            const cat = categories.find(c => c.name === window.tempCat);
+            transactions.unshift({
+                id: Date.now(),
+                amount, note, type: window.tempType, category: window.tempCat, emoji: cat.emoji,
+                date: new Date().toISOString().split('T')[0],
+                time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            });
+            closeModal();
+            updateUI();
+        }
+
+        function openDreamModal() {
+            openModal(`
+                <h3 class="text-xl font-black mb-6">Impian Baru ✨</h3>
+                <div class="space-y-4">
+                    <input id="dream-title" class="w-full p-4 bg-slate-50 rounded-[1.2rem] outline-none font-bold" placeholder="Nama impian..." />
+                    <input id="dream-target" type="number" class="w-full p-4 bg-slate-50 rounded-[1.2rem] outline-none font-black" placeholder="Target Rp..." />
+                    <button onclick="saveDream()" class="w-full py-4 bg-blue-500 text-white rounded-[2rem] font-black uppercase text-xs">Simpan</button>
+                    <button onclick="closeModal()" class="w-full text-slate-300 font-bold text-xs uppercase mt-2">Batal</button>
+                </div>
+            `);
+        }
+
+        function saveDream() {
+            const title = document.getElementById('dream-title').value;
+            const target = parseInt(document.getElementById('dream-target').value);
+            if (!title || isNaN(target)) return;
+            dreams.push({ id: Date.now(), title, target });
+            closeModal();
+            updateUI();
+        }
+
+        function openCmoModal() {
+            openModal(`
+                <h3 class="text-2xl font-black mb-6">Input CMO</h3>
+                <div class="space-y-6">
+                    <input id="cmo-name" class="w-full p-4 bg-slate-50 rounded-[1.2rem] outline-none font-bold" placeholder="Nama anggota..." />
+                    <input id="cmo-amount" type="number" class="w-full p-4 bg-slate-50 rounded-[1.2rem] outline-none font-black" placeholder="Jumlah Rp..." />
+                    <button onclick="saveCmo()" class="w-full py-5 bg-indigo-500 text-white rounded-[2rem] font-black uppercase text-xs">Daftarkan Anggota</button>
+                    <button onclick="closeModal()" class="w-full text-slate-300 font-bold text-xs uppercase mt-2">Tutup</button>
+                </div>
+            `);
+        }
+
+        function saveCmo() {
+            const name = document.getElementById('cmo-name').value;
+            const amount = parseInt(document.getElementById('cmo-amount').value);
+            if (!name || isNaN(amount)) return;
+            treasuryList.push({ id: Date.now(), name, amount, paid: false });
+            closeModal();
+            updateUI();
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
